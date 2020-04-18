@@ -19,7 +19,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_compile_options("/ZW")
 
 file(GLOB SOURCES "./src/*")
-add_executable(TestTreeWalker SHARED ${SOURCES})
+add_executable(TestTreeWalker ${SOURCES})
 target_link_libraries(
   TestTreeWalker
   OleAut32.lib
