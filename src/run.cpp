@@ -26,7 +26,7 @@ HRESULT run() {
     return hr;
   }
 
-  hr = pUIAutomationElement->CreateTrueCondition(&pCondition);
+  hr = pUIAutomation->CreateTrueCondition(&pCondition);
 
   if (FAILED(hr)) {
     goto CLEANUP;

@@ -1,4 +1,3 @@
-#include <cpplogger/cpplogger.h>
 #include <windows.h>
 
 #include <strsafe.h>
