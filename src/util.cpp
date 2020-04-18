@@ -5,9 +5,6 @@
 #include <tlhelp32.h>
 
 #include "util.h"
-#include <strsafe.h>
-
-extern Logger::Logger *Log;
 
 void SafeCloseHandle(HANDLE *pHandle) {
   if (pHandle != nullptr) {
@@ -16,50 +13,7 @@ void SafeCloseHandle(HANDLE *pHandle) {
   }
 }
 
-void SafeDelete(RawEvent **pRawEvent) {
-  if (pRawEvent == nullptr) {
-    return;
-  }
-  if (*pRawEvent == nullptr) {
-    return;
-  }
-  if ((*pRawEvent)->Element->NameLength > 0) {
-    delete[](*pRawEvent)->Element->NameData;
-    (*pRawEvent)->Element->NameData = nullptr;
-  }
-  if ((*pRawEvent)->Element->ClassNameLength > 0) {
-    delete[](*pRawEvent)->Element->ClassNameData;
-    (*pRawEvent)->Element->ClassNameData = nullptr;
-  }
-  if ((*pRawEvent)->Element->AriaRoleNameLength > 0) {
-    delete[](*pRawEvent)->Element->AriaRoleNameData;
-    (*pRawEvent)->Element->AriaRoleNameData = nullptr;
-  }
-
-  delete (*pRawEvent)->Element;
-  (*pRawEvent)->Element = nullptr;
-
-  delete (*pRawEvent);
-  (*pRawEvent) = nullptr;
-}
-
-void SafeDelete(RawProcessInfo **pRawProcessInfo) {
-  if (pRawProcessInfo == nullptr) {
-    return;
-  }
-  if (*pRawProcessInfo == nullptr) {
-    return;
-  }
-  if ((*pRawProcessInfo)->ProcessNameLength > 0) {
-    delete[](*pRawProcessInfo)->ProcessNameData;
-    (*pRawProcessInfo)->ProcessNameData = nullptr;
-  }
-
-  delete (*pRawProcessInfo);
-  (*pRawProcessInfo) = nullptr;
-}
-
-bool isEmptyIUIAutomationElement(IUIAutomationElement *pElement) {
+bool IsEmptyIUIAutomationElement(IUIAutomationElement *pElement) {
   if (pElement == nullptr) {
     return true;
   }
@@ -102,49 +56,4 @@ bool isEmptyIUIAutomationElement(IUIAutomationElement *pElement) {
   }
 
   return false;
-}
-
-HRESULT GetProcessInfo(HWND hWindow, RawProcessInfo **rawProcessInfo) {
-  DWORD processId{};
-
-  GetWindowThreadProcessId(hWindow, &processId);
-
-  return GetProcessInfo(processId, rawProcessInfo);
-}
-
-HRESULT GetProcessInfo(DWORD processId, RawProcessInfo **rawProcessInfo) {
-  if (rawProcessInfo == nullptr) {
-    return E_FAIL;
-  }
-  (*rawProcessInfo) = new RawProcessInfo;
-  HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-
-  if (hSnapshot == nullptr) {
-    return E_FAIL;
-  }
-
-  PROCESSENTRY32W processEntry{};
-
-  processEntry.dwSize = sizeof(PROCESSENTRY32W);
-
-  bool hasProcessEntry = Process32FirstW(hSnapshot, &processEntry);
-
-  while (hasProcessEntry) {
-    if (processEntry.th32ProcessID == processId) {
-      size_t length = std::wcslen(processEntry.szExeFile);
-
-      (*rawProcessInfo)->ProcessNameLength = length;
-      (*rawProcessInfo)->ProcessNameData = new wchar_t[length + 1]{};
-      std::wmemcpy((*rawProcessInfo)->ProcessNameData, processEntry.szExeFile,
-                   length);
-
-      break;
-    }
-
-    hasProcessEntry = Process32NextW(hSnapshot, &processEntry);
-  }
-
-  SafeCloseHandle(&hSnapshot);
-
-  return S_OK;
 }
