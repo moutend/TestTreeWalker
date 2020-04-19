@@ -64,28 +64,28 @@ HRESULT run() {
     hr = pFound->GetElement(i, &pElement);
 
     if (FAILED(hr)) {
-    wprintf(L"%d. Failed to retrieve element.\n", i+1);
+      wprintf(L"%d. Failed to retrieve element.\n", i + 1);
 
-    continue;
+      continue;
     }
 
     BSTR name;
 
-hr = pElement->get_CurrentName (&name);
+    hr = pElement->get_CurrentName(&name);
 
-if (FAILED(hr)) {
-wprintf(L"%d. Failed to get name.\n", i+1);
+    if (FAILED(hr)) {
+      wprintf(L"%d. Failed to get name.\n", i + 1);
 
-goto RELEASE;
-}
+      goto RELEASE;
+    }
 
     wprintf(L"%d. Name=\"%s\"\n", i + 1, name);
 
-RELEASE:
+  RELEASE:
 
-  if (name != nullptr) {
-    SysFreeString(name);
-  }
+    if (name != nullptr) {
+      SysFreeString(name);
+    }
 
     SafeRelease(&pElement);
   }
