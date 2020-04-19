@@ -58,6 +58,37 @@ HRESULT run() {
 
   wprintf(L"Found %d item(s)\n", length);
 
+  for (int i = 0; i < length; i++) {
+    IUIAutomationElement *pElement{};
+
+    hr = pFound->GetElement(i, &pElement);
+
+    if (FAILED(hr)) {
+    wprintf(L"%d. Failed to retrieve element.\n", i+1);
+
+    continue;
+    }
+
+    BSTR name;
+
+hr = pElement->get_CurrentName (&name);
+
+if (FAILED(hr)) {
+wprintf(L"%d. Failed to get name.\n", i+1);
+
+goto RELEASE;
+}
+
+    wprintf(L"%d. Name=\"%s\"\n", i + 1, name);
+
+RELEASE:
+
+  if (name != nullptr) {
+    SysFreeString(name);
+  }
+
+    SafeRelease(&pElement);
+  }
 CLEANUP:
 
   SafeRelease(&pFound);
