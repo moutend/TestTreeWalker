@@ -17,4 +17,3 @@ template <class T> void SafeRelease(T **ppT) {
 }
 
 void SafeCloseHandle(HANDLE *pHandle);
-bool IsEmptyIUIAutomationElement(IUIAutomationElement *pElement);
